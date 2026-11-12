@@ -1,0 +1,70 @@
+<style>
+    .boss-card {
+        background-color: rgb(22, 67, 107);
+        padding: 20px;
+        margin: 20px;
+        border: 5px solid black;  
+        border-radius: 10px;
+        color: rgb(236, 231, 231);
+        box-shadow: 10px 5px 5px grey;
+    }
+</style>
+<div>
+    <h1>Boss Collection</h1>
+    <p>Here is your collection of bosses:</p>
+
+</div>
+
+
+
+<div>
+    <h1>Difficulty Filter</h1>
+    <select id="difficulty">
+        <option value="">All Difficulties</option>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+    </select>
+    <button id="btnSearch" class="btn btn-primary">Search</button>
+</div>
+
+<div class="container">
+    <div class="row">
+
+        <% for (let boss of bosses) { %>
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="boss-card">
+                    <h1><%= boss.name %></h1>
+                    <p>Difficulty: <%=boss.difficulty %></p>
+                    <p>Health: <%= boss.health %></p>
+                    <p>Damage: <%= boss.damage %></p>
+                    <img class="boss-image" src="<%= boss.image %>" alt="<%= boss.name %>"/>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+</div>
+
+
+<script>
+    function buildUrl(difficulty) {
+        if (difficulty === "") {
+            return "/Bosses";
+        }
+        else {
+            return `/Bosses?difficulty=${difficulty}`;
+        }
+    }
+
+    window.onload = () => {
+        document.getElementById("btnSearch").addEventListener('click', () => {
+            //console.log("CLICKED")
+            const difficulty = document.getElementById("difficulty").value;
+
+            const url = buildUrl(difficulty);
+
+            location.href = url;
+        })
+    }
+</script>
