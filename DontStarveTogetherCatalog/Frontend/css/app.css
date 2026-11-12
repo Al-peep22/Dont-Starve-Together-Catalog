@@ -21,7 +21,7 @@ body {
 }
 
 .logo h1 {
-    color: white;
+    color: #eae1d6;
     font-size: 1.8rem;
 }
 
@@ -34,7 +34,7 @@ body {
 
 .nav-links a {
     text-decoration: none;
-    color: white;
+    color: #eae1d6;
     font-weight: bold;
     transition: color 0.3s;
 }
