@@ -43,15 +43,15 @@
 <script>
 const express = require("express");
 const router = express.Router();
-const AppService = require("../services/app_service"); // Adjust path to your app_service file
+const AppService = require("../services/app_service"); 
 
-// If you are already using multer or another upload middleware in this file, keep your existing setup
+
 const multer = require("multer");
 const upload = multer({ dest: "public/uploads/" });
 
 const service = new AppService();
 
-// Find your existing router.post("/create-form") and update it:
+
 router.post("/create-form", upload.single("image"), async (req, res) => {
     try {
         const newForm = {

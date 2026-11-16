@@ -1,16 +1,16 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const { Product } = require("../");
 
-// Best practice: store this in a .env file as process.env.MONGO_URI
+
 const uri = "mongodb+srv://dst-dev:S0rry@dstdatabase.v7nzjfd.mongodb.net/DontStarveTogetherCatalog?retryWrites=true&w=majority";
 
-// Map dropdown values to exact MongoDB collection names
+
 const VALID_COLLECTIONS = {
-    Boss: "Boss",           // Change to "Bosses" if your collections are plural
-    Character: "Character", // or "Characters"
-    Creature: "Creature",   // or "Creatures"
-    Item: "Item",           // or "Items"
-    Recipe: "Recipe"        // or "Recipes"
+    Boss: "Boss",           
+    Character: "Character", 
+    Creature: "Creature",  
+    Item: "Item",           
+    Recipe: "Recipe"       
 };
 
 
@@ -18,7 +18,7 @@ class app_service {
     async #getCollection(client, category) {
         const db = client.db("DontStarveTogetherCatalog");
         
-        // Use the mapped collection name, or fall back to "stuff" if none/invalid
+       
         const collectionName = VALID_COLLECTIONS[category] || "stuff";
         return db.collection(collectionName);
     }
@@ -27,7 +27,6 @@ class app_service {
         const client = new MongoClient(uri);
         try {
             await client.connect();
-            // Pass the selected category from the form to get the right collection
             const coll = await this.#getCollection(client, newForm.category);
             await coll.insertOne(newForm);
         } finally {
@@ -35,8 +34,8 @@ class app_service {
         }
     }
 
-    // Retrieve forms from a specific category, or across ALL categories if none is specified
-    async getForms(OldestYear, category) {
+   
+    async getForms(category) {
         const client = new MongoClient(uri);
         try {
             await client.connect();
@@ -55,13 +54,7 @@ class app_service {
                 }
             }
 
-            if (OldestYear === undefined) {
-                return unfilteredForms;
-            } else {
-                return unfilteredForms.filter((item) => {
-                    return Number(item.year) >= Number(OldestYear);
-                });
-            }
+            return unfilteredForms;
         } finally {
             await client.close();
         }
