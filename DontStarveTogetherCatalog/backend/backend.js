@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 const express = require("express");
 const multer = require("multer");
 
@@ -9,14 +10,20 @@ if (!process.env.MONGO_URI) {
 }
 
 const app = express();
-const publicDirectory = path.join(__dirname, "..", "public");
-const uploadDirectory = path.join(publicDirectory, "uploads");
+const projectDirectory = path.join(__dirname, "..");
+const frontendDirectory = path.join(projectDirectory, "frontend");
+const htmlDirectory = path.join(frontendDirectory, "html");
+const uploadDirectory = path.join(frontendDirectory, "uploads");
 
 fs.mkdirSync(uploadDirectory, { recursive: true });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "1mb" }));
-app.use(express.static(publicDirectory));
+app.use("/css", express.static(path.join(frontendDirectory, "css")));
+app.use("/font", express.static(path.join(frontendDirectory, "font")));
+app.use("/images", express.static(path.join(frontendDirectory, "images")));
+app.use("/js", express.static(path.join(frontendDirectory, "js")));
+app.use("/uploads", express.static(uploadDirectory));
 
 function requireAdmin(req, res, next) {
     const expectedToken = process.env.ADMIN_TOKEN;
@@ -49,10 +56,19 @@ app.get("/healthz", (req, res) => {
     res.status(200).json({ status: "ok" });
 });
 
-app.get("/add", requireAdmin, (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "Frontend", "app", "add_form.html"));
+app.get("/", (req, res) => {
+    res.sendFile(path.join(frontendDirectory, "html", "index.html"));
 });
 
+app.get("/add", requireAdmin, (req, res) => {
+    res.sendFile(path.join(htmlDirectory, "add_form.html"));
+});
+
+app.get("/pages/add_form.html", requireAdmin, (req, res) => {
+    res.sendFile(path.join(htmlDirectory, "add_form.html"));
+});
+
+app.use("/pages", express.static(htmlDirectory, { index: false }));
 app.use("/create-form", requireAdmin);
 app.use("/", require("./routes"));
 

@@ -4,11 +4,12 @@ const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
 const router = express.Router();
-const AppService = require("../services/app_service");
+const AppService = require("../app_service");
 
 const service = new AppService();
-const validCategories = new Set(["Boss", "Character", "Creature", "Item", "Recipe"]);
-const uploadDirectory = path.join(__dirname, "..", "..", "public", "uploads");
+const validCategories = new Set(["Boss", "Character", "Creature", "Item", "Recipe", "World", "Event"]);
+const formCategories = new Set(["Boss", "Character", "Creature", "Item", "Recipe"]);
+const uploadDirectory = path.join(__dirname, "..", "..", "frontend", "uploads");
 
 fs.mkdirSync(uploadDirectory, { recursive: true });
 
@@ -38,7 +39,7 @@ router.post("/create-form", upload.single("image"), async (req, res) => {
     try {
         const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
         const category = req.body.category;
-        if (!name || name.length > 120 || !validCategories.has(category)) {
+        if (!name || name.length > 120 || !formCategories.has(category)) {
             return res.status(400).send("A name and valid category are required.");
         }
 

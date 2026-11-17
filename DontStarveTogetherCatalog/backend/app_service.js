@@ -10,7 +10,9 @@ const VALID_COLLECTIONS = {
     Character: "Character",
     Creature: "Creature",
     Item: "Item",
-    Recipe: "Recipe"
+    Recipe: "Recipe",
+    World: "World",
+    Event: "Event"
 };
 
 class AppService {
@@ -41,13 +43,17 @@ class AppService {
 
             if (category) {
                 const collection = await this.#getCollection(client, category);
-                return await collection.find().toArray();
+                const items = await collection.find().toArray();
+                return items.map(item => ({ ...item, category: item.category || category }));
             }
 
             const documents = [];
-            for (const collectionName of Object.values(VALID_COLLECTIONS)) {
+            for (const [categoryName, collectionName] of Object.entries(VALID_COLLECTIONS)) {
                 const items = await database.collection(collectionName).find().toArray();
-                documents.push(...items);
+                documents.push(...items.map(item => ({
+                    ...item,
+                    category: item.category || categoryName
+                })));
             }
             return documents;
         } finally {
