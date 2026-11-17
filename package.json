@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -18,16 +19,7 @@
     "url": "https://github.com/Al-peep22/Dont-Starve-Together-Catalog/issues"
   },
   "homepage": "https://github.com/Al-peep22/Dont-Starve-Together-Catalog#readme",
-  "dependencies": {
-    "express": "^5.3.0",
-    "mongodb": "^7.9.0",
-    "multer": "^2.5.0"
-  },
-  "name": "dst-catalog",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "node app.js"
-  },
+
   "dependencies": {
     "express": "^4.19.2",
     "mongodb": "^6.5.0",
