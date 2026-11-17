@@ -2,7 +2,7 @@ const { MongoClient, ObjectId } = require("mongodb");
 const { Product } = require("../");
 
 
-const uri = "mongodb+srv://dst-dev:S0rry@dstdatabase.v7nzjfd.mongodb.net/DontStarveTogetherCatalog?retryWrites=true&w=majority";
+const uri = process.env.MONGO_URI || "mongodb+srv://dst-dev:S0rry@dstdatabase.v7nzjfd.mongodb.net/DontStarveTogetherCatalog?retryWrites=true&w=majority";
 
 
 const VALID_COLLECTIONS = {
