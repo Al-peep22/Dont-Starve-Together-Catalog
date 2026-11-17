@@ -39,4 +39,34 @@
     <script src="script.js"></script>
 
 </body>
+
+<script>
+const express = require("express");
+const router = express.Router();
+const AppService = require("../services/app_service"); 
+
+
+const multer = require("multer");
+const upload = multer({ dest: "public/uploads/" });
+
+const service = new AppService();
+
+
+router.post("/create-form", upload.single("image"), async (req, res) => {
+    try {
+        const newForm = {
+            ...req.body,
+            image: req.file ? req.file.filename : undefined
+        };
+
+        await service.addForm(newForm);
+        res.redirect("/");
+    } catch (err) {
+        console.error("Error saving form:", err);
+        res.status(500).send("Failed to create product.");
+    }
+});
+
+module.exports = router;
+</script>
 </html>
