@@ -2,10 +2,9 @@
   "name": "dont-starve-together-catalog",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "DontStarveTogetherCatalog/Backend/backend.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node DontStarveTogetherCatalog/Backend/backend.js"
   },
   "repository": {
     "type": "git",
@@ -19,10 +18,9 @@
     "url": "https://github.com/Al-peep22/Dont-Starve-Together-Catalog/issues"
   },
   "homepage": "https://github.com/Al-peep22/Dont-Starve-Together-Catalog#readme",
-
   "dependencies": {
     "express": "^4.19.2",
     "mongodb": "^6.5.0",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^2.5.0"
   }
 }

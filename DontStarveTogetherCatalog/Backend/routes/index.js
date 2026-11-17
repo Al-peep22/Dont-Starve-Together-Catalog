@@ -1,34 +1,62 @@
 // routes/index.js (Backend - runs in Node.js)
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const multer = require("multer");
 const router = express.Router();
 const AppService = require("../services/app_service");
 
 const service = new AppService();
+const validCategories = new Set(["Boss", "Character", "Creature", "Item", "Recipe"]);
+const uploadDirectory = path.join(__dirname, "..", "..", "public", "uploads");
 
-// Use diskStorage so Multer keeps the original .png / .jpg extension
+fs.mkdirSync(uploadDirectory, { recursive: true });
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "public/uploads/");
+        cb(null, uploadDirectory);
     },
     filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname); // e.g., '.png'
+        const ext = path.extname(file.originalname);
         const baseName = path.basename(file.originalname, ext).replace(/\s+/g, "_");
         cb(null, `${Date.now()}-${baseName}${ext}`);
     }
 });
 
-const upload = multer({ storage });
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (!["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.mimetype)) {
+            return cb(new Error("Only image files are allowed."));
+        }
+        cb(null, true);
+    }
+});
 
-// POST: Save form and redirect back home
 router.post("/create-form", upload.single("image"), async (req, res) => {
     try {
+        const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
+        const category = req.body.category;
+        if (!name || name.length > 120 || !validCategories.has(category)) {
+            return res.status(400).send("A name and valid category are required.");
+        }
+
         const newForm = {
-            ...req.body,
-            // Saves as "1731865000-meatballs.png"
-            image: req.file ? req.file.filename : undefined
+            name,
+            category,
+            image: req.file ? req.file.filename : null
         };
+
+        for (const field of ["hunger", "sanity", "health", "durability"]) {
+            if (req.body[field] !== undefined && req.body[field] !== "") {
+                const value = Number(req.body[field]);
+                if (!Number.isFinite(value)) {
+                    return res.status(400).send(`${field} must be a number.`);
+                }
+                newForm[field] = value;
+            }
+        }
 
         await service.addForm(newForm);
         res.redirect("/");
@@ -38,10 +66,14 @@ router.post("/create-form", upload.single("image"), async (req, res) => {
     }
 });
 
-// GET: Send catalog data as JSON to the frontend
 router.get("/api/forms", async (req, res) => {
     try {
-        const items = await service.getForms(req.query.category);
+        const category = req.query.category;
+        if (category !== undefined && (typeof category !== "string" || !validCategories.has(category))) {
+            return res.status(400).json({ error: "Invalid category." });
+        }
+
+        const items = await service.getForms(category);
         res.json(items);
     } catch (err) {
         console.error("Error loading forms:", err);
