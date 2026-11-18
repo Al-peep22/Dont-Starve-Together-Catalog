@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lore | Don't Starve Together Catalog</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <div data-site-header data-page-title="Lore"></div>
+    <main class="lore-page">
+        <nav class="lore-pagination" aria-label="Lore pages">
+            <p data-current-page>Page 0</p>
+            <form data-page-form>
+                <button type="button" data-previous-page aria-label="Previous lore page" disabled>&#8592;</button>
+                <label for="lore-page-number" class="visually-hidden">Lore page number</label>
+                <input id="lore-page-number" name="page" type="number" min="0" step="1" value="0" required>
+                <button type="submit">Go</button>
+                <button type="button" data-next-page aria-label="Next lore page" disabled>&#8594;</button>
+            </form>
+        </nav>
+        <p data-lore-status role="status" aria-live="polite"></p>
+        <article class="lore-content" data-lore-content></article>
+    </main>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/favorites.js" defer></script>
+    <script src="/js/lore.js" defer></script>
+</body>
+</html>

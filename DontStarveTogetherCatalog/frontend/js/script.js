@@ -1,49 +1,36 @@
-// public/script.js (Frontend - runs in the browser)
-const menuShell = document.getElementById("menu-shell");
-const menuToggle = document.getElementById("menu-toggle");
-const navigationPanel = document.getElementById("site-navigation");
-
-function setMenuOpen(isOpen) {
-    menuShell.classList.toggle("is-open", isOpen);
-    menuToggle.setAttribute("aria-expanded", String(isOpen));
-    menuToggle.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+function showCatalogMessage(container, message) {
+    const text = document.createElement("p");
+    text.textContent = message;
+    container.replaceChildren(text);
 }
 
-menuShell.addEventListener("pointerenter", event => {
-    if (event.pointerType === "mouse") {
-        setMenuOpen(true);
+function addCatalogImage(container, item) {
+    if (typeof item.image !== "string" || !item.image) {
+        return;
     }
-});
 
-menuShell.addEventListener("pointerleave", event => {
-    if (event.pointerType === "mouse" && !navigationPanel.contains(document.activeElement)) {
-        setMenuOpen(false);
+    const imagePath = item.image.replace(/\\/g, "/");
+    const isRemoteImage = imagePath.startsWith("http://") || imagePath.startsWith("https://");
+    const isServedImage = imagePath.startsWith("/") ||
+        imagePath.startsWith("images/") ||
+        imagePath.startsWith("uploads/");
+    if (!isRemoteImage && !isServedImage) {
+        return;
     }
-});
 
-menuToggle.addEventListener("click", () => {
-    const hoverAvailable = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    setMenuOpen(hoverAvailable || menuToggle.getAttribute("aria-expanded") !== "true");
-});
+    const encodedPath = imagePath.split("/").map(encodeURIComponent).join("/");
+    const image = document.createElement("img");
+    image.alt = typeof item.name === "string" ? item.name : "Catalog item";
+    image.loading = "lazy";
+    image.src = isRemoteImage || imagePath.startsWith("/") ? imagePath : `/${encodedPath}`;
+    image.addEventListener("error", () => image.remove(), { once: true });
+    container.appendChild(image);
+}
 
-document.addEventListener("pointerdown", event => {
-    if (!menuShell.contains(event.target)) {
-        setMenuOpen(false);
-    }
-});
-
-document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && menuToggle.getAttribute("aria-expanded") === "true") {
-        setMenuOpen(false);
-        menuToggle.focus();
-    }
-});
-
-navigationPanel.addEventListener("click", event => {
-    if (event.target.closest("a")) {
-        setMenuOpen(false);
-    }
-});
+function formatCatalogLabel(key) {
+    return key.replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+        .replace(/^./, character => character.toUpperCase());
+}
 
 async function loadCatalog() {
     const container = document.getElementById("catalog-container");
@@ -55,35 +42,51 @@ async function loadCatalog() {
         const items = await response.json();
 
         if (items.length === 0) {
-            container.innerHTML = "<p>No entries yet.</p>";
+            showCatalogMessage(container, "No entries in the MongoDB catalog yet.");
             return;
         }
 
+        items.sort((left, right) => {
+            const categoryOrder = String(left.catalogCategory || "")
+                .localeCompare(String(right.catalogCategory || ""));
+            return categoryOrder || String(left.name || "").localeCompare(String(right.name || ""));
+        });
         container.replaceChildren();
         for (const item of items) {
             const card = document.createElement("article");
             card.className = "catalog-card";
-
-            if (item.image) {
-                const image = document.createElement("img");
-                image.src = `/uploads/${encodeURIComponent(String(item.image))}`;
-                image.alt = typeof item.name === "string" ? item.name : "Catalog item";
-                image.width = 120;
-                card.appendChild(image);
-            }
+            addCatalogImage(card, item);
 
             const title = document.createElement("h3");
             title.textContent = typeof item.name === "string" ? item.name : "Untitled";
             card.appendChild(title);
 
             const category = document.createElement("p");
-            category.textContent = `Category: ${String(item.category || "Unknown")}`;
+            category.textContent = `Catalog group: ${String(item.catalogCategory || "Unknown")}`;
             card.appendChild(category);
+
+            const fields = document.createElement("dl");
+            fields.className = "record-details";
+            for (const [key, value] of Object.entries(item)) {
+                if (key === "_id" || key === "name" || key === "catalogCategory" || value == null) {
+                    continue;
+                }
+
+                const label = document.createElement("dt");
+                label.textContent = formatCatalogLabel(key);
+
+                const detail = document.createElement("dd");
+                detail.textContent = typeof value === "object"
+                    ? JSON.stringify(value, null, 2)
+                    : String(value);
+                fields.append(label, detail);
+            }
+            card.appendChild(fields);
             container.appendChild(card);
         }
     } catch (err) {
         console.error("Failed to load items:", err);
-        container.innerHTML = "<p>Error loading catalog.</p>";
+        showCatalogMessage(container, "Unable to load the MongoDB catalog right now.");
     }
 }
 

@@ -1,3 +1,4 @@
+// Keep these detail URLs in sync with the server's favorite links.
 const detailPages = {
     Boss: "/pages/Bosses/individual_boss.html",
     Character: "/pages/Characters/individual_character.html",
@@ -21,22 +22,19 @@ function addImage(container, item) {
     }
 
     const imagePath = item.image.replace(/\\/g, "/");
+    const isRemoteImage = imagePath.startsWith("http://") || imagePath.startsWith("https://");
+    const isServedImage = imagePath.startsWith("/") ||
+        imagePath.startsWith("images/") ||
+        imagePath.startsWith("uploads/");
+    if (!isRemoteImage && !isServedImage) {
+        return;
+    }
+
     const encodedPath = imagePath.split("/").map(encodeURIComponent).join("/");
     const image = document.createElement("img");
     image.alt = item.name || "Catalog entry";
-    image.src = imagePath.startsWith("/") || /^https?:\/\//i.test(imagePath)
-        ? imagePath
-        : imagePath.startsWith("images/") || imagePath.startsWith("uploads/")
-            ? `/${encodedPath}`
-            : `/uploads/${encodeURIComponent(imagePath)}`;
-    image.addEventListener("error", () => {
-        if (!image.dataset.fallback) {
-            image.dataset.fallback = "true";
-            image.src = `/images/${encodedPath}`;
-        } else {
-            image.remove();
-        }
-    });
+    image.src = isRemoteImage || imagePath.startsWith("/") ? imagePath : `/${encodedPath}`;
+    image.addEventListener("error", () => image.remove(), { once: true });
     container.appendChild(image);
 }
 
@@ -59,7 +57,7 @@ async function loadListPage(page) {
         })));
         const items = groups.flatMap(group => group.items.map(item => ({
             ...item,
-            category: group.category
+            catalogCategory: group.category
         })));
 
         if (items.length === 0) {
@@ -71,7 +69,7 @@ async function loadListPage(page) {
         list.replaceChildren();
 
         for (const item of items) {
-            const detailPage = detailPages[item.category];
+            const detailPage = detailPages[item.catalogCategory];
             if (!detailPage || item._id === undefined || item._id === null) {
                 continue;
             }
@@ -105,7 +103,77 @@ async function loadListPage(page) {
 
 function formatLabel(key) {
     return key.replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+        .replace(/_/g, " ")
         .replace(/^./, character => character.toUpperCase());
+}
+
+function renderValue(value) {
+    if (value == null || (typeof value === "string" && !value.trim())) {
+        return document.createTextNode("N/A");
+    }
+
+    if (Array.isArray(value)) {
+        if (value.length === 0) {
+            return document.createTextNode("N/A");
+        }
+        const list = document.createElement("ul");
+        list.className = "record-value-list";
+        for (const entry of value) {
+            const listItem = document.createElement("li");
+            if (entry && typeof entry === "object" && !Array.isArray(entry) && "relevance" in entry) {
+                // Relationship arrays use an identifier plus a human-readable relevance.
+                const identifiers = Object.entries(entry).filter(([key]) => /(^_id$|_id$|Id$)/.test(key));
+                const names = identifiers.map(([, id]) =>
+                    id == null || String(id).trim() === "" ? "N/A" : String(id)
+                );
+                if (names.length) {
+                    listItem.append(document.createTextNode(`${names.join(", ")}: `));
+                }
+                listItem.append(renderValue(entry.relevance));
+                const otherFields = Object.fromEntries(Object.entries(entry).filter(([key]) =>
+                    key !== "relevance" && !identifiers.some(([idKey]) => idKey === key)
+                ));
+                if (Object.keys(otherFields).length) {
+                    listItem.append(renderValue(otherFields));
+                }
+            } else {
+                listItem.append(renderValue(entry));
+            }
+            list.append(listItem);
+        }
+        return list;
+    }
+
+    if (typeof value === "object") {
+        const entries = Object.entries(value);
+        if (!entries.length) {
+            return document.createTextNode("N/A");
+        }
+        const fields = document.createElement("dl");
+        fields.className = "nested-record-details";
+        for (const [key, nestedValue] of entries) {
+            const term = document.createElement("dt");
+            term.textContent = formatLabel(key);
+            const description = document.createElement("dd");
+            description.append(renderValue(nestedValue));
+            fields.append(term, description);
+        }
+        return fields;
+    }
+
+    return document.createTextNode(String(value));
+}
+
+function updatePageTitle(title) {
+    const headerMount = document.querySelector("[data-site-header]");
+    if (headerMount) {
+        headerMount.dataset.pageTitle = title;
+        const headerTitle = headerMount.querySelector("[data-page-title]");
+        if (headerTitle) {
+            headerTitle.textContent = title;
+        }
+    }
+    document.title = `${title} | Don't Starve Together Catalog`;
 }
 
 async function loadDetailPage(page) {
@@ -132,23 +200,32 @@ async function loadDetailPage(page) {
         const fields = document.createElement("dl");
         fields.className = "record-details";
         for (const [key, value] of Object.entries(item)) {
-            if (key === "_id" || key === "image" || key === "name" || key === "category" || value == null) {
+            if (
+                key === "_id" ||
+                key === "name" ||
+                key === "catalogCategory"
+            ) {
                 continue;
             }
 
             const term = document.createElement("dt");
             term.textContent = formatLabel(key);
             const description = document.createElement("dd");
-            description.textContent = typeof value === "object"
-                ? JSON.stringify(value, null, 2)
-                : String(value);
+            description.append(renderValue(value));
             fields.append(term, description);
         }
 
         const title = page.querySelector("[data-record-title]");
         title.textContent = typeof item.name === "string" ? item.name : "Untitled";
-        document.title = `${title.textContent} | Don't Starve Together Catalog`;
+        updatePageTitle(title.textContent);
         detail.appendChild(fields);
+        const titleRow = document.createElement("div");
+        titleRow.className = "title-with-favorite";
+        const favorite = document.createElement("div");
+        favorite.className = "favorite-control";
+        title.before(titleRow);
+        titleRow.append(title, favorite);
+        setupFavorite(favorite, category, String(item._id), title.textContent);
     } catch (error) {
         console.error("Failed to load entry:", error);
         showMessage(detail, "Unable to load this entry right now.");

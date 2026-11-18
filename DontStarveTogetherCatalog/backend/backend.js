@@ -10,6 +10,9 @@ if (!process.env.MONGO_URI) {
 }
 
 const app = express();
+if (process.env.RENDER) {
+    app.set("trust proxy", 1);
+}
 const projectDirectory = path.join(__dirname, "..");
 const frontendDirectory = path.join(projectDirectory, "frontend");
 const htmlDirectory = path.join(frontendDirectory, "html");
@@ -68,6 +71,7 @@ app.get("/pages/add_form.html", requireAdmin, (req, res) => {
     res.sendFile(path.join(htmlDirectory, "add_form.html"));
 });
 
+// /pages mirrors frontend/html; the protected add form is handled above first.
 app.use("/pages", express.static(htmlDirectory, { index: false }));
 app.use("/create-form", requireAdmin);
 app.use("/", require("./routes"));

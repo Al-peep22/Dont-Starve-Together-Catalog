@@ -7,11 +7,14 @@
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-    <header class="page-header"><a href="/pages/Items/items.html">Back to items</a></header>
+    <div data-site-header data-page-title="Item"></div>
     <main data-catalog-page="detail" data-category="Item">
+        <p><a class="back-link" href="/pages/Items/items.html">Back to items</a></p>
         <h1 data-record-title>Item details</h1>
         <div data-record-detail aria-live="polite">Loading item...</div>
     </main>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/favorites.js" defer></script>
     <script src="/js/catalog.js" defer></script>
 </body>
 </html>

@@ -1,95 +1,98 @@
-<h1>Create New Product</h1>
-<form method="POST" action="/create-form" enctype="multipart/form-data">
-    <!-- Always visible: Name -->
-    <div class="form-group">
-        <label for="name">Form Name</label>
-        <input id="name" class="form-control" type="text" name="name" 
-               placeholder="Meatballs" required />
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add item | Don't Starve Together Catalog</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <div data-site-header data-page-title="Add item"></div>
+    <main>
+        <h1>Create New Product</h1>
+        <form method="POST" action="/create-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Form Name</label>
+                <input id="name" class="form-control" type="text" name="name"
+                       placeholder="Meatballs" required />
+            </div>
 
-    <!-- Always visible: Category Dropdown -->
-    <div class="form-group">
-        <label for="category">Category</label>
-        <select id="category" class="form-control" name="category" required>
-            <option value="">Select a category</option>
-            <option value="Boss">Boss</option>
-            <option value="Character">Character</option>
-            <option value="Creature">Creature</option>
-            <option value="Item">Item</option>
-            <option value="Recipe">Recipe</option>
-        </select>
-    </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" class="form-control" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="Boss">Boss</option>
+                    <option value="Character">Character</option>
+                    <option value="Creature">Creature</option>
+                    <option value="Item">Item</option>
+                    <option value="Recipe">Recipe</option>
+                </select>
+            </div>
 
-    <!-- DYNAMIC SECTION: Only for Recipe -->
-    <div class="form-group category-fields" data-category="Recipe" style="display: none;">
-        <label for="hunger">Hunger Amount</label>
-        <input id="hunger" class="form-control" name="hunger" type="number" 
-               step="any" placeholder="e.g., 62.5" required disabled />
-        <label for="sanity">Sanity Amount</label>
-        <input id="sanity" class="form-control" name="sanity" type="number" 
-               step="any" placeholder="e.g., 0" required disabled />
-        <label for="health">Health Amount</label>
-        <input id="health" class="form-control" name="health" type="number" 
-               step="any" placeholder="e.g., 0" required disabled />
-        
-    </div>
+            <div class="form-group category-fields" data-category="Recipe" style="display: none;">
+                <label for="hunger">Hunger Amount</label>
+                <input id="hunger" class="form-control" name="hunger" type="number"
+                       step="any" placeholder="e.g., 62.5" required disabled />
+                <label for="sanity">Sanity Amount</label>
+                <input id="sanity" class="form-control" name="sanity" type="number"
+                       step="any" placeholder="e.g., 0" required disabled />
+                <label for="health">Health Amount</label>
+                <input id="health" class="form-control" name="health" type="number"
+                       step="any" placeholder="e.g., 0" required disabled />
+            </div>
 
-    <!-- DYNAMIC SECTION: Shared by Boss, Character, and Creature -->
-    <div class="form-group category-fields" data-category="Boss,Character,Creature" style="display: none;">
-        <label for="health">Health</label>
-        <input id="health" class="form-control" name="health" type="number" 
-               step="any" placeholder="e.g., 150" required disabled />
-    </div>
+            <div class="form-group category-fields" data-category="Boss,Character,Creature" style="display: none;">
+                <label for="health">Health</label>
+                <input id="health" class="form-control" name="health" type="number"
+                       step="any" placeholder="e.g., 150" required disabled />
+            </div>
 
-    <!-- DYNAMIC SECTION: Only for Item -->
-    <div class="form-group category-fields" data-category="Item" style="display: none;">
-        <label for="durability">Durability / Uses</label>
-        <input id="durability" class="form-control" name="durability" type="number" 
-               step="any" placeholder="e.g., 10" required disabled />
-    </div>
+            <div class="form-group category-fields" data-category="Item" style="display: none;">
+                <label for="durability">Durability / Uses</label>
+                <input id="durability" class="form-control" name="durability" type="number"
+                       step="any" placeholder="e.g., 10" required disabled />
+            </div>
 
-    <!-- Always visible: Image -->
-    <div class="form-group">
-        <label for="image">Image</label>
-        <input id="image" class="form-control" type="file" name="image" 
-               accept="image/*" required />
-    </div>
+            <div class="form-group">
+                <label for="image">Image</label>
+                <input id="image" class="form-control" type="file" name="image"
+                       accept="image/*" required />
+            </div>
 
-    <!-- Submit Button -->
-    <div class="form-group">
-        <input type="submit" class="btn btn-primary" value="Create Product" />
-    </div>
-</form>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Create Product" />
+            </div>
+        </form>
+    </main>
 
-<script>
-    const categorySelect = document.getElementById('category');
-    const categoryBlocks = document.querySelectorAll('.category-fields');
+    <script src="/js/header.js" defer></script>
+    <script>
+        const categorySelect = document.getElementById("category");
+        const categoryBlocks = document.querySelectorAll(".category-fields");
 
-    function updateFormFields() {
-        const selectedCategory = categorySelect.value;
+        function updateFormFields() {
+            const selectedCategory = categorySelect.value;
 
-        categoryBlocks.forEach(block => {
-            // Read the comma-separated list of categories this block belongs to
-            const allowedCategories = block.getAttribute('data-category').split(',');
-            const inputs = block.querySelectorAll('input, select, textarea');
+            categoryBlocks.forEach(block => {
+                const allowedCategories = block.getAttribute("data-category").split(",");
+                const inputs = block.querySelectorAll("input, select, textarea");
 
-            if (allowedCategories.includes(selectedCategory)) {
-                // Show the block and enable its inputs
-                block.style.display = 'block';
-                inputs.forEach(input => {
-                    input.disabled = false;
-                });
-            } else {
-                // Hide the block, disable inputs (bypasses 'required'), and clear values
-                block.style.display = 'none';
-                inputs.forEach(input => {
-                    input.disabled = true;
-                    input.value = '';
-                });
-            }
-        });
-    }
+                if (allowedCategories.includes(selectedCategory)) {
+                    block.style.display = "block";
+                    inputs.forEach(input => {
+                        input.disabled = false;
+                    });
+                } else {
+                    block.style.display = "none";
+                    inputs.forEach(input => {
+                        input.disabled = true;
+                        input.value = "";
+                    });
+                }
+            });
+        }
 
-    // Run whenever the dropdown selection changes
-    categorySelect.addEventListener('change', updateFormFields);
-</script>
+        categorySelect.addEventListener("change", updateFormFields);
+    </script>
+</body>
+</html>

@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-    <header class="page-header"><a href="/">Catalog home</a></header>
+    <div data-site-header data-page-title="Items"></div>
     <main data-catalog-page="list" data-categories="Item">
         <h1>Items</h1>
         <p>Select an item to view its details.</p>
         <div class="record-grid" data-record-list aria-live="polite">Loading items...</div>
     </main>
+    <script src="/js/header.js" defer></script>
     <script src="/js/catalog.js" defer></script>
 </body>
 </html>

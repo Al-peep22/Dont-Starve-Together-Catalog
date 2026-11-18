@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Don't Starve Together Catalog</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <div data-site-header data-page-title="Profile"></div>
+    <main class="profile-page">
+        <p data-profile-status role="status" aria-live="polite"></p>
+        <section data-account-forms hidden>
+            <h2>Sign in</h2>
+            <form data-login-form>
+                <label>Username or email <input name="identifier" autocomplete="username" required></label>
+                <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+                <button type="submit">Sign in</button>
+            </form>
+            <h2>Create an account</h2>
+            <form data-register-form>
+                <label>Username <input name="username" autocomplete="username" minlength="3" maxlength="32" pattern="[a-zA-Z0-9_]+" required></label>
+                <label>Email <input name="email" type="email" autocomplete="email" maxlength="254" required></label>
+                <label>Password <input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="256" required></label>
+                <button type="submit">Create account</button>
+            </form>
+        </section>
+        <section data-profile hidden>
+            <h2 data-profile-name></h2>
+            <button type="button" data-logout>Sign out</button>
+            <h2>Favorites</h2>
+            <ul data-favorites-list></ul>
+        </section>
+    </main>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/profile.js" defer></script>
+</body>
+</html>

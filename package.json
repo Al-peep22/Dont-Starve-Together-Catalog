@@ -9,6 +9,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.5.0",
     "mongodb": "^6.5.0",
     "multer": "^2.5.0"
   }

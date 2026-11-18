@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-    <header class="page-header"><a href="/">Catalog home</a></header>
+    <div data-site-header data-page-title="World &amp; Events"></div>
     <main data-catalog-page="list" data-categories="World,Event">
         <h1>World &amp; Events</h1>
         <p>Select a world or event to view its details.</p>
         <div class="record-grid" data-record-list aria-live="polite">Loading worlds and events...</div>
     </main>
+    <script src="/js/header.js" defer></script>
     <script src="/js/catalog.js" defer></script>
 </body>
 </html>

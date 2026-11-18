@@ -7,49 +7,25 @@
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+    <div data-site-header data-page-title=""></div>
 
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <h1>Don't Starve Together Catalog</h1>
+    <main class="home-page">
+        <section class="home-intro" aria-labelledby="home-title">
+            <img class="home-image" src="/images/text/title_dst.png"
+                 alt="A collection of books and notes from the world of Don't Starve Together">
+            <div class="home-copy">
+                <h1 id="home-title">Explore the world of Don't Starve Together</h1>
+                <p>
+                    Discover the characters, creatures, items, recipes, and places that make
+                    this strange wilderness unforgettable.
+                </p>
+                <a class="lore-link" href="/pages/lore.html?page=0">
+                    Explore the game lore
+                </a>
             </div>
-
-            <div class="menu-shell" id="menu-shell">
-                <button class="menu-toggle" id="menu-toggle" type="button"
-                        aria-label="Open navigation menu" aria-expanded="false"
-                        aria-controls="site-navigation">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <nav class="nav-panel" id="site-navigation" aria-label="Site navigation">
-                    <h2>Navigate</h2>
-                    <ul class="nav-panel-links">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/pages/Characters/characters.html">Character list</a></li>
-                        <li><a href="/pages/Creatures/creatures.html">Creature list</a></li>
-                        <li><a href="/pages/Items/items.html">Item list</a></li>
-                        <li><a href="/pages/Bosses/bosses.html">Boss list</a></li>
-                        <li><a href="/pages/Recipes/recipes.html">Recipe list</a></li>
-                        <li><a href="/pages/World/world_events.html">World events</a></li>
-                        <li><a href="/add">Add item</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </nav>
-    </header>
-
-    <main>
-        <section>
-            <h2>Catalog</h2>
-            <div id="catalog-container">Loading catalog...</div>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2026 </p>
-    </footer>
-
-    <script src="/js/script.js"></script>
+    <script src="/js/header.js" defer></script>
 </body>
 </html>
