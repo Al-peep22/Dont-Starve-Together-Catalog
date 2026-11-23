@@ -1,6 +1,9 @@
 # Don't Starve Together Catalog
 
-## Run locally
+## Run on Render
+https://dont-starve-together-catalog.onrender.com/
+
+## OR Run locally
 
 Requires Node.js LTS and a MongoDB database. From the repository root:
 
