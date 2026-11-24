@@ -326,7 +326,10 @@ main {
     max-width: 400px;
     margin: 12px 0 32px;
 }
-
+.profile-page input {
+    color: #000000;
+    background-color: #000000;
+}
 .profile-page label {
     display: grid;
     gap: 4px;
@@ -388,11 +391,6 @@ main {
 
 .record-card:hover {
     border-color: #38bdf8;
-}
-
-.profile input {
-color: #000000;
-background-color: #ffffff;
 }
 
 .catalog-card img,
