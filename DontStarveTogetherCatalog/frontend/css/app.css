@@ -390,6 +390,11 @@ main {
     border-color: #38bdf8;
 }
 
+.profile-page input {
+color: #000000;
+background-color: #ffffff;
+}
+
 .catalog-card img,
 .record-card img,
 [data-record-detail] > img {
@@ -450,6 +455,8 @@ footer {
     main {
         padding: 24px;
     }
+
+   
 }
 
 @media (prefers-reduced-motion: reduce) {
