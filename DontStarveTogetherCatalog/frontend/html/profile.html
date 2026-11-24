@@ -7,16 +7,49 @@
     <title>Profile | Don't Starve Together Catalog</title>
     <link rel="stylesheet" href="/css/app.css">
     <style>
+        /* Centers the main content container horizontally */
+        .profile-page {
+            max-width: 450px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        /* Stacks form labels and inputs neatly */
+        .profile-page form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .profile-page label {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
         .profile-page input {
             color: #000000 !important;
             background-color: #ffffff;
+            padding: 8px;
         }
+
         .profile-page button {
             color: white;
             background-color: #000000;
+            padding: 10px;
+            cursor: pointer;
         }
 
-        /* Optional: Overrides browser autofill text color (Chrome/Safari) */
+        /* Removes default bullet offset on centered favorites list */
+        .profile-page ul {
+            list-style-position: inside;
+            padding: 0;
+        }
+
+        /* Overrides browser autofill text color (Chrome/Safari) */
         .profile-page input:-webkit-autofill {
             -webkit-text-fill-color: #000000 !important;
         }
@@ -46,8 +79,6 @@
             <button type="button" data-logout>Sign out</button>
             <h2>Favorites</h2>
             <ul data-favorites-list></ul>
-
-
         </section>
     </main>
     <script src="/js/header.js" defer></script>
